@@ -1,0 +1,47 @@
+/* Fit line */
+.fit-line {
+  stroke: var(--color-line);
+  stroke-width: 2.5px;
+}
+
+/* Residual lines */
+.residual {
+  stroke: #bbb;
+  stroke-width: 1.5px;
+  stroke-dasharray: 3,3;
+}
+
+/* Points */
+.points circle {
+  cursor: grab;
+  stroke: white;
+  stroke-width: 1.5px;
+  transition: r 0.15s ease;
+}
+.points circle:hover {
+  r: 10;
+}
+.points circle:active {
+  cursor: grabbing;
+}
+
+/* Axis labels */
+.axis-label {
+  font-size: 0.85rem;
+  fill: #555;
+}
+
+/* Drop shadow + rounding on the chart itself */
+svg#viz {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+}
+
+/* Grid lines styling override (in case shared styles don't cover it) */
+.grid line {
+  stroke: var(--color-grid);
+  stroke-opacity: 0.7;
+  shape-rendering: crispEdges;
+}
+.grid path {
+  stroke-width: 0;
+}

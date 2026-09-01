@@ -9,11 +9,12 @@
 </head>
 <body>
   <h1>Linear Regression</h1>
-  <p class="subtitle">Drag the points. Watch the best-fit line update live.</p>
+  <p class="subtitle">Drag the points. Watch the best-fit line and residuals update live.</p>
 
   <div id="controls">
     <button id="reset">Reset points</button>
     <button id="add-noise">Shuffle points</button>
+    <label><input type="checkbox" id="toggle-residuals" checked> Show residuals</label>
   </div>
 
   <svg id="viz"></svg>
