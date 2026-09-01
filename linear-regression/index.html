@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Linear Regression</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+  <link rel="stylesheet" href="../shared/styles.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Linear Regression</h1>
+  <p class="subtitle">Drag the points. Watch the best-fit line update live.</p>
+
+  <div id="controls">
+    <button id="reset">Reset points</button>
+    <button id="add-noise">Shuffle points</button>
+  </div>
+
+  <svg id="viz"></svg>
+  <div id="stats"></div>
+
+  <script src="../shared/utils.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
