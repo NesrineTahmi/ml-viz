@@ -43,3 +43,34 @@ function drawAxes(g, xScale, yScale, innerHeight) {
     .attr("class", "y-axis")
     .call(d3.axisLeft(yScale));
 }
+
+
+function animateNumber(node, from, to, decimals = 3) {
+  d3.select(node).transition().duration(300).tween("text", function () {
+    const i = d3.interpolateNumber(from, to);
+    return t => { this.textContent = i(t).toFixed(decimals); };
+  });
+}
+
+function addGrid(g, xScale, yScale, innerWidth, innerHeight) {
+  const gridLayer = g.append("g").attr("class", "grid");
+  gridLayer.append("g")
+    .call(d3.axisLeft(yScale).tickSize(-innerWidth).tickFormat(""));
+  gridLayer.append("g")
+    .attr("transform", `translate(0,${innerHeight})`)
+    .call(d3.axisBottom(xScale).tickSize(-innerHeight).tickFormat(""));
+  gridLayer.selectAll("line").attr("stroke", "var(--color-grid)");
+  return gridLayer;
+}
+
+function addAxisLabels(g, innerWidth, innerHeight, xLabel, yLabel) {
+  g.append("text")
+    .attr("x", innerWidth / 2).attr("y", innerHeight + 35)
+    .attr("text-anchor", "middle").attr("class", "axis-label")
+    .text(xLabel);
+  g.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("x", -innerHeight / 2).attr("y", -35)
+    .attr("text-anchor", "middle").attr("class", "axis-label")
+    .text(yLabel);
+}
