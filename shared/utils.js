@@ -74,3 +74,39 @@ function addAxisLabels(g, innerWidth, innerHeight, xLabel, yLabel) {
     .attr("text-anchor", "middle").attr("class", "axis-label")
     .text(yLabel);
 }
+
+
+// --- Logistic regression helpers ---
+
+function sigmoid(z) {
+  return 1 / (1 + Math.exp(-z));
+}
+
+// points: [[x1, x2, label], ...], label is 0 or 1
+function trainLogisticRegression(points, { iterations = 300, lr = 0.1 } = {}) {
+  let w1 = 0, w2 = 0, b = 0;
+  const n = points.length;
+  for (let iter = 0; iter < iterations; iter++) {
+    let gw1 = 0, gw2 = 0, gb = 0;
+    for (const [x1, x2, y] of points) {
+      const pred = sigmoid(w1 * x1 + w2 * x2 + b);
+      const error = pred - y;
+      gw1 += error * x1;
+      gw2 += error * x2;
+      gb += error;
+    }
+    w1 -= lr * gw1 / n;
+    w2 -= lr * gw2 / n;
+    b -= lr * gb / n;
+  }
+  return { w1, w2, b };
+}
+
+function crossEntropyLoss(points, w1, w2, b) {
+  const eps = 1e-9;
+  const losses = points.map(([x1, x2, y]) => {
+    const p = sigmoid(w1 * x1 + w2 * x2 + b);
+    return -(y * Math.log(p + eps) + (1 - y) * Math.log(1 - p + eps));
+  });
+  return mean(losses);
+}
