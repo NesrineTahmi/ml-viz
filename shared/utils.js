@@ -110,3 +110,24 @@ function crossEntropyLoss(points, w1, w2, b) {
   });
   return mean(losses);
 }
+
+// --- KNN helper ---
+
+// trainingPoints: [[x1, x2, label], ...]
+// query: [x1, x2]
+// returns { predictedLabel, neighbors: [{point, distance}, ...] } sorted by distance, top k
+function knnClassify(trainingPoints, query, k) {
+  const withDist = trainingPoints.map(p => ({
+    point: p,
+    distance: euclideanDistance([p[0], p[1]], query)
+  }));
+  withDist.sort((a, b) => a.distance - b.distance);
+  const neighbors = withDist.slice(0, k);
+  const votes = {};
+  neighbors.forEach(n => {
+    const label = n.point[2];
+    votes[label] = (votes[label] || 0) + 1;
+  });
+  const predictedLabel = +Object.keys(votes).reduce((a, b) => votes[a] > votes[b] ? a : b);
+  return { predictedLabel, neighbors };
+}
