@@ -131,3 +131,94 @@ function knnClassify(trainingPoints, query, k) {
   const predictedLabel = +Object.keys(votes).reduce((a, b) => votes[a] > votes[b] ? a : b);
   return { predictedLabel, neighbors };
 }
+
+// --- Decision tree helpers ---
+
+function giniImpurity(labels) {
+  const total = labels.length;
+  if (total === 0) return 0;
+  const counts = {};
+  labels.forEach(l => counts[l] = (counts[l] || 0) + 1);
+  return 1 - Object.values(counts).reduce((s, c) => s + (c / total) ** 2, 0);
+}
+
+function majorityClass(points) {
+  const counts = {};
+  points.forEach(p => counts[p[2]] = (counts[p[2]] || 0) + 1);
+  return +Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
+}
+
+function bestSplit(points) {
+  const n = points.length;
+  const baseGini = giniImpurity(points.map(p => p[2]));
+  let best = null;
+
+  for (let feature = 0; feature < 2; feature++) {
+    const values = [...new Set(points.map(p => p[feature]))].sort((a, b) => a - b);
+    for (let i = 0; i < values.length - 1; i++) {
+      const threshold = (values[i] + values[i + 1]) / 2;
+      const left = points.filter(p => p[feature] <= threshold);
+      const right = points.filter(p => p[feature] > threshold);
+      if (left.length === 0 || right.length === 0) continue;
+
+      const weighted = (left.length / n) * giniImpurity(left.map(p => p[2])) +
+                        (right.length / n) * giniImpurity(right.map(p => p[2]));
+      const gain = baseGini - weighted;
+
+      if (!best || gain > best.gain) {
+        best = { feature, threshold, gain, left, right };
+      }
+    }
+  }
+  return best;
+}
+
+function buildTree(points, depth, maxDepth, minSamplesSplit = 2) {
+  const gini = giniImpurity(points.map(p => p[2]));
+  const label = majorityClass(points);
+
+  if (depth >= maxDepth || gini === 0 || points.length < minSamplesSplit) {
+    return { isLeaf: true, label, gini, count: points.length };
+  }
+
+  const split = bestSplit(points);
+  if (!split || split.gain <= 0) {
+    return { isLeaf: true, label, gini, count: points.length };
+  }
+
+  return {
+    isLeaf: false,
+    feature: split.feature,
+    threshold: split.threshold,
+    gini,
+    count: points.length,
+    left: buildTree(split.left, depth + 1, maxDepth, minSamplesSplit),
+    right: buildTree(split.right, depth + 1, maxDepth, minSamplesSplit)
+  };
+}
+
+function predictTree(node, point) {
+  if (node.isLeaf) return node.label;
+  const val = point[node.feature];
+  return val <= node.threshold ? predictTree(node.left, point) : predictTree(node.right, point);
+}
+
+// Returns the list of nodes visited from root to the leaf for a given point
+function predictPath(node, point) {
+  const path = [node];
+  let current = node;
+  while (!current.isLeaf) {
+    current = point[current.feature] <= current.threshold ? current.left : current.right;
+    path.push(current);
+  }
+  return path;
+}
+
+// Adds a children array in place so d3.hierarchy can walk it directly
+// (kept as the SAME objects, not copies, so path-highlighting works by reference)
+function attachChildren(node) {
+  if (!node.isLeaf) {
+    node.children = [attachChildren(node.left), attachChildren(node.right)];
+  }
+  return node;
+}

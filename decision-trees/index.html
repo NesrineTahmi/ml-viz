@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Decision Trees</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+  <link rel="stylesheet" href="../shared/styles.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Decision Trees</h1>
+  <p class="subtitle">Click a point on the chart to see which path it takes through the tree.</p>
+
+  <div id="controls">
+    <label>max depth = <span id="depth-value">2</span>
+      <input type="range" id="depth-slider" min="1" max="5" value="2">
+    </label>
+    <button id="reset">Clear query point</button>
+    <label><input type="checkbox" id="toggle-regions" checked> Show decision regions</label>
+  </div>
+
+  <div class="panels">
+    <svg id="viz"></svg>
+    <svg id="tree-viz" width="420" height="460"></svg>
+  </div>
+
+  <div id="stats"></div>
+
+  <script src="../shared/utils.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

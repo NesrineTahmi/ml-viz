@@ -91,7 +91,7 @@ function render(animateLine = true) {
 function dragged(event, d) {
   d[0] = xScale.invert(event.x);
   d[1] = yScale.invert(event.y);
-  render(false); // no line transition while dragging — instant feedback
+  render(false); // no line transition while dragging 
 }
 
 d3.select("#reset").on("click", () => {
