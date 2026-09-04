@@ -17,16 +17,8 @@ const yScale = d3.scaleLinear().domain([0, 10]).range([innerHeight, 0]);
 
 addAxisLabels(g, innerWidth, innerHeight, "Feature x₁", "Feature x₂");
 
-// --- Layers, back to front ---
-const regionLayer = g.append("g").attr("class", "regions");
-addGrid(g, xScale, yScale, innerWidth, innerHeight);
-drawAxes(g, xScale, yScale, innerHeight);
-const neighborLinesLayer = g.append("g").attr("class", "neighbor-lines");
-const trainingLayer = g.append("g").attr("class", "training-points");
-const queryLayer = g.append("g").attr("class", "query-point");
-
-const clickCatcher = g.insert("rect", ".regions + *")
-  .lower()
+// --- Click catcher FIRST, so nothing else can sit on top of it and block clicks ---
+const clickCatcher = g.append("rect")
   .attr("width", innerWidth)
   .attr("height", innerHeight)
   .attr("fill", "transparent")
@@ -36,8 +28,14 @@ const clickCatcher = g.insert("rect", ".regions + *")
     queryPoint = [xScale.invert(mx), yScale.invert(my)];
     render();
   });
-// keep click catcher below everything else but still clickable
-clickCatcher.lower();
+
+// --- Remaining layers, back to front ---
+const regionLayer = g.append("g").attr("class", "regions");
+addGrid(g, xScale, yScale, innerWidth, innerHeight);
+drawAxes(g, xScale, yScale, innerHeight);
+const neighborLinesLayer = g.append("g").attr("class", "neighbor-lines");
+const trainingLayer = g.append("g").attr("class", "training-points");
+const queryLayer = g.append("g").attr("class", "query-point");
 
 const REGION_CELL = 14;
 

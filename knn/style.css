@@ -1,3 +1,7 @@
+.regions rect {
+  pointer-events: none;
+}
+
 .training-points circle {
   stroke: white;
   stroke-width: 1.5px;
