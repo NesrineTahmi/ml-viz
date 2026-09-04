@@ -222,3 +222,52 @@ function attachChildren(node) {
   }
   return node;
 }
+
+// --- Evaluation metrics helpers ---
+
+// scores: array of {score, label} where label is 0 or 1, score is predicted probability of class 1
+function confusionMatrix(scores, threshold) {
+  let tp = 0, fp = 0, tn = 0, fn = 0;
+  scores.forEach(({ score, label }) => {
+    const pred = score >= threshold ? 1 : 0;
+    if (pred === 1 && label === 1) tp++;
+    else if (pred === 1 && label === 0) fp++;
+    else if (pred === 0 && label === 0) tn++;
+    else fn++;
+  });
+  return { tp, fp, tn, fn };
+}
+
+function metricsFromConfusion({ tp, fp, tn, fn }) {
+  const precision = tp + fp === 0 ? 0 : tp / (tp + fp);
+  const recall = tp + fn === 0 ? 0 : tp / (tp + fn);
+  const f1 = precision + recall === 0 ? 0 : 2 * (precision * recall) / (precision + recall);
+  const accuracy = (tp + tn) / (tp + fp + tn + fn);
+  const fpr = fp + tn === 0 ? 0 : fp / (fp + tn); // false positive rate
+  const tpr = recall; // true positive rate = recall
+  return { precision, recall, f1, accuracy, fpr, tpr };
+}
+
+// Sweeps all thresholds present in the data to build the ROC curve
+function computeROC(scores) {
+  const thresholds = [...new Set(scores.map(s => s.score))].sort((a, b) => b - a);
+  thresholds.push(1.01, -0.01); // ensure curve starts at (0,0) and ends at (1,1)
+  const points = thresholds.map(t => {
+    const cm = confusionMatrix(scores, t);
+    const { fpr, tpr } = metricsFromConfusion(cm);
+    return { threshold: t, fpr, tpr };
+  });
+  points.sort((a, b) => a.fpr - b.fpr || a.tpr - b.tpr);
+  return points;
+}
+
+// Trapezoidal AUC from sorted ROC points
+function computeAUC(rocPoints) {
+  let auc = 0;
+  for (let i = 1; i < rocPoints.length; i++) {
+    const dx = rocPoints[i].fpr - rocPoints[i - 1].fpr;
+    const avgY = (rocPoints[i].tpr + rocPoints[i - 1].tpr) / 2;
+    auc += dx * avgY;
+  }
+  return auc;
+}
