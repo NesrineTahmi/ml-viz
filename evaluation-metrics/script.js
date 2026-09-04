@@ -32,7 +32,7 @@ function renderTrueStrip() {
     .attr("class", d => d.label === 0 ? "true-dot class-0" : "true-dot class-1");
 }
 
-// --- Predicted / threshold strip (bottom) — same width/margins as trueChart, so dots line up vertically ---
+// --- Predicted / threshold strip (bottom) ---
 const scoresChart = createChart("#scores-viz", { width: 380, height: 130, margin: { top: 10, right: 20, bottom: 30, left: 20 } });
 const sx = d3.scaleLinear().domain([0, 1]).range([0, scoresChart.innerWidth]);
 
@@ -58,7 +58,8 @@ function renderScoresStrip() {
     .attr("cx", d => sx(d.score))
     .attr("class", d => {
       const pred = d.score >= threshold ? 1 : 0;
-      return pred === d.label ? "score-dot correct" : "score-dot wrong";
+      if (pred !== d.label) return "score-dot wrong";
+      return pred === 1 ? "score-dot correct-1" : "score-dot correct-0";
     });
 
   const predicted1 = scoreData.filter(d => d.score >= threshold).length;

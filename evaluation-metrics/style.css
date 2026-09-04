@@ -47,6 +47,9 @@
 .legend .dot:first-child { margin-left: 0; }
 .legend .dot.class-0 { background: var(--color-point); }
 .legend .dot.class-1 { background: var(--color-line); }
+.legend .dot.legend-0 { background: var(--color-point); }
+.legend .dot.legend-1 { background: var(--color-correct); }
+.legend .dot.legend-wrong { background: var(--color-wrong); }
 
 .split-count {
   font-size: 0.8rem;
@@ -94,7 +97,8 @@ svg#roc-viz {
   stroke: var(--surface);
   stroke-width: 1.5px;
 }
-.score-dot.correct { fill: var(--color-correct); }
+.score-dot.correct-0 { fill: var(--color-point); }
+.score-dot.correct-1 { fill: var(--color-correct); }
 .score-dot.wrong { fill: var(--color-wrong); }
 
 .diagonal {
