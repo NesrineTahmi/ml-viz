@@ -1,0 +1,29 @@
+.training-points circle {
+  stroke: white;
+  stroke-width: 1.5px;
+}
+.training-points circle.class-0 { fill: var(--color-point); }
+.training-points circle.class-1 { fill: var(--color-wrong); }
+
+.neighbor-line {
+  stroke: #999;
+  stroke-width: 1.5px;
+  stroke-dasharray: 3,3;
+}
+
+.highlight {
+  fill: none;
+  stroke: var(--color-boundary);
+  stroke-width: 2.5px;
+}
+
+.query {
+  stroke: #333;
+  stroke-width: 2px;
+}
+.query.class-0 { fill: var(--color-point); }
+.query.class-1 { fill: var(--color-wrong); }
+
+svg#viz {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+}

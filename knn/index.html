@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>K-Nearest Neighbors</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+  <link rel="stylesheet" href="../shared/styles.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>K-Nearest Neighbors</h1>
+  <p class="subtitle">Click anywhere to drop a query point and see which class wins its vote.</p>
+
+  <div id="controls">
+    <label>k = <span id="k-value">3</span>
+      <input type="range" id="k-slider" min="1" max="15" value="3">
+    </label>
+    <button id="reset">Reset</button>
+    <label><input type="checkbox" id="toggle-regions" checked> Show decision regions</label>
+  </div>
+
+  <svg id="viz"></svg>
+  <div id="stats"></div>
+
+  <script src="../shared/utils.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
