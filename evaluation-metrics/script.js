@@ -1,5 +1,4 @@
 // Toy predicted scores: model's predicted probability of class 1, plus true label
-// Deliberately imperfect/overlapping so the threshold actually matters
 const scoreData = [
   { score: 0.05, label: 0 }, { score: 0.10, label: 0 }, { score: 0.15, label: 0 },
   { score: 0.20, label: 0 }, { score: 0.28, label: 0 }, { score: 0.33, label: 1 },
@@ -12,8 +11,29 @@ const scoreData = [
 
 let threshold = 0.5;
 
-// --- Scores strip chart (dots along a 0-1 line, colored by true label, split by predicted side) ---
-const scoresChart = createChart("#scores-viz", { width: 380, height: 220, margin: { top: 20, right: 20, bottom: 40, left: 20 } });
+// --- True labels strip (top) ---
+const trueChart = createChart("#true-viz", { width: 380, height: 110, margin: { top: 10, right: 20, bottom: 30, left: 20 } });
+const tx = d3.scaleLinear().domain([0, 1]).range([0, trueChart.innerWidth]);
+
+trueChart.g.append("g")
+  .attr("transform", `translate(0,${trueChart.innerHeight})`)
+  .call(d3.axisBottom(tx).ticks(5));
+
+const trueDots = trueChart.g.append("g").attr("class", "true-dots");
+
+function renderTrueStrip() {
+  const dots = trueDots.selectAll("circle").data(scoreData);
+  dots.enter()
+    .append("circle")
+    .attr("r", 6)
+    .attr("cy", trueChart.innerHeight / 2)
+    .merge(dots)
+    .attr("cx", d => tx(d.score))
+    .attr("class", d => d.label === 0 ? "true-dot class-0" : "true-dot class-1");
+}
+
+// --- Predicted / threshold strip (bottom) — same width/margins as trueChart, so dots line up vertically ---
+const scoresChart = createChart("#scores-viz", { width: 380, height: 130, margin: { top: 10, right: 20, bottom: 30, left: 20 } });
 const sx = d3.scaleLinear().domain([0, 1]).range([0, scoresChart.innerWidth]);
 
 scoresChart.g.append("g")
@@ -25,40 +45,6 @@ const thresholdLine = scoresChart.g.append("line")
   .attr("y1", 0).attr("y2", scoresChart.innerHeight);
 
 const scoreDots = scoresChart.g.append("g").attr("class", "score-dots");
-
-// --- ROC chart ---
-const rocChart = createChart("#roc-viz", { width: 380, height: 380, margin: { top: 20, right: 20, bottom: 40, left: 45 } });
-const rx = d3.scaleLinear().domain([0, 1]).range([0, rocChart.innerWidth]);
-const ry = d3.scaleLinear().domain([0, 1]).range([rocChart.innerHeight, 0]);
-
-drawAxes(rocChart.g, rx, ry, rocChart.innerHeight);
-addAxisLabels(rocChart.g, rocChart.innerWidth, rocChart.innerHeight, "False Positive Rate", "True Positive Rate");
-
-// diagonal reference line (random classifier)
-rocChart.g.append("line")
-  .attr("x1", rx(0)).attr("y1", ry(0))
-  .attr("x2", rx(1)).attr("y2", ry(1))
-  .attr("class", "diagonal");
-
-const rocPath = rocChart.g.append("path").attr("class", "roc-path");
-const rocDot = rocChart.g.append("circle").attr("class", "roc-dot").attr("r", 7)
-  .call(d3.drag().on("drag", (event) => {
-    const fprAtDrag = Math.max(0, Math.min(1, rx.invert(event.x)));
-    // find closest precomputed ROC point's threshold to this fpr
-    const roc = computeROC(scoreData);
-    let closest = roc[0];
-    roc.forEach(p => { if (Math.abs(p.fpr - fprAtDrag) < Math.abs(closest.fpr - fprAtDrag)) closest = p; });
-    threshold = Math.max(0, Math.min(1, closest.threshold));
-    syncSliderUI();
-    render();
-  }));
-
-const line = d3.line().x(d => rx(d.fpr)).y(d => ry(d.tpr));
-
-function syncSliderUI() {
-  d3.select("#threshold-slider").property("value", threshold);
-  d3.select("#threshold-value").text(threshold.toFixed(2));
-}
 
 function renderScoresStrip() {
   thresholdLine.attr("x1", sx(threshold)).attr("x2", sx(threshold));
@@ -74,6 +60,42 @@ function renderScoresStrip() {
       const pred = d.score >= threshold ? 1 : 0;
       return pred === d.label ? "score-dot correct" : "score-dot wrong";
     });
+
+  const predicted1 = scoreData.filter(d => d.score >= threshold).length;
+  const predicted0 = scoreData.length - predicted1;
+  d3.select("#threshold-split").text(`${predicted0} predicted class 0   ·   ${predicted1} predicted class 1`);
+}
+
+// --- ROC chart ---
+const rocChart = createChart("#roc-viz", { width: 380, height: 380, margin: { top: 20, right: 20, bottom: 40, left: 45 } });
+const rx = d3.scaleLinear().domain([0, 1]).range([0, rocChart.innerWidth]);
+const ry = d3.scaleLinear().domain([0, 1]).range([rocChart.innerHeight, 0]);
+
+drawAxes(rocChart.g, rx, ry, rocChart.innerHeight);
+addAxisLabels(rocChart.g, rocChart.innerWidth, rocChart.innerHeight, "False Positive Rate", "True Positive Rate");
+
+rocChart.g.append("line")
+  .attr("x1", rx(0)).attr("y1", ry(0))
+  .attr("x2", rx(1)).attr("y2", ry(1))
+  .attr("class", "diagonal");
+
+const rocPath = rocChart.g.append("path").attr("class", "roc-path");
+const rocDot = rocChart.g.append("circle").attr("class", "roc-dot").attr("r", 7)
+  .call(d3.drag().on("drag", (event) => {
+    const fprAtDrag = Math.max(0, Math.min(1, rx.invert(event.x)));
+    const roc = computeROC(scoreData);
+    let closest = roc[0];
+    roc.forEach(p => { if (Math.abs(p.fpr - fprAtDrag) < Math.abs(closest.fpr - fprAtDrag)) closest = p; });
+    threshold = Math.max(0, Math.min(1, closest.threshold));
+    syncSliderUI();
+    render();
+  }));
+
+const line = d3.line().x(d => rx(d.fpr)).y(d => ry(d.tpr));
+
+function syncSliderUI() {
+  d3.select("#threshold-slider").property("value", threshold);
+  d3.select("#threshold-value").text(threshold.toFixed(2));
 }
 
 function renderConfusionMatrix(cm) {
@@ -102,6 +124,7 @@ function render() {
   const cm = confusionMatrix(scoreData, threshold);
   const m = metricsFromConfusion(cm);
 
+  renderTrueStrip();
   renderScoresStrip();
   renderConfusionMatrix(cm);
   renderROC();

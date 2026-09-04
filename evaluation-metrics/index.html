@@ -1,15 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <title>Evaluation Metrics</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
   <link rel="stylesheet" href="../shared/styles.css">
   <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+  <a class="back-link" href="../">← All demos</a>
+
   <h1>Evaluation Metrics</h1>
-  <p class="subtitle">Drag the threshold slider (or the dot on the ROC curve) to see the confusion matrix and metrics update live.</p>
+  <p class="subtitle">Drag the threshold slider, or the dot on the ROC curve. Compare the true labels above against what gets predicted below.</p>
 
   <div id="controls">
     <label>threshold = <span id="threshold-value">0.50</span>
@@ -19,18 +23,30 @@
   </div>
 
   <div class="panels">
-    <div class="panel">
-      <h3>Predicted scores</h3>
+
+    <div class="panel panel-strips">
+      <h3>True labels</h3>
+      <p class="legend">
+        <span class="dot class-0"></span> Class 0
+        <span class="dot class-1"></span> Class 1
+      </p>
+      <svg id="true-viz"></svg>
+
+      <h3 class="predicted-title">Predicted at this threshold</h3>
+      <p id="threshold-split" class="split-count"></p>
       <svg id="scores-viz"></svg>
     </div>
+
     <div class="panel">
       <h3>Confusion matrix</h3>
       <div id="confusion-matrix"></div>
     </div>
+
     <div class="panel">
       <h3>ROC curve <span id="auc-label"></span></h3>
       <svg id="roc-viz"></svg>
     </div>
+
   </div>
 
   <div id="stats"></div>

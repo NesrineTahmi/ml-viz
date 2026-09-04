@@ -1,59 +1,68 @@
 :root {
-  --bg: #F6F7F5;
-  --text: #1E2124;
-  --text-muted: #5B616B;
-  --surface: #FFFFFF;
-  --border: #E3E5E1;
+  --bg: #121317;
+  --ink-light: #F5F6F4;
+  --muted: #8A8F98;
+  --border: #26282E;
 }
 
 * { box-sizing: border-box; }
 
 body {
-  margin: 0;
+  margin: 0 auto;
   background: var(--bg);
-  color: var(--text);
-  font-family: "IBM Plex Sans", sans-serif;
-  padding: 48px 24px 64px;
+  color: var(--ink-light);
+  font-family: "Space Grotesk", sans-serif;
+  padding: 56px 28px 72px;
 }
 
-main {
-  max-width: 920px;
-  margin: 0 auto;
+main, .hero, footer {
+  max-width: 1040px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.axis-label {
+  fill: var(--muted);
+  font-size: 0.85rem;
 }
 
 /* --- Hero --- */
 
 .hero {
-  max-width: 920px;
-  margin: 0 auto 56px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 32px;
+  gap: 36px;
+  margin-bottom: 48px;
   flex-wrap: wrap;
 }
 
-.hero-text {
+.hero-copy {
   max-width: 480px;
 }
 
 .hero h1 {
-  font-family: "Fraunces", serif;
-  font-size: 2.3rem;
-  font-weight: 600;
-  line-height: 1.15;
-  margin: 0 0 14px;
+  font-size: 3.4rem;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  margin: 0 0 18px;
+}
+
+.hero h1 span {
+  color: var(--muted);
 }
 
 .hero p {
-  color: var(--text-muted);
-  font-size: 1.02rem;
+  color: var(--muted);
+  font-size: 1.05rem;
   line-height: 1.55;
   margin: 0;
+  max-width: 400px;
 }
 
 .hero-sketch {
-  width: 220px;
+  width: 280px;
   height: auto;
   flex-shrink: 0;
 }
@@ -84,10 +93,10 @@ main {
 
 .hero-fit {
   stroke: #E0575B;
-  stroke-width: 2;
-  stroke-dasharray: 220;
-  stroke-dashoffset: 220;
-  animation: draw-line 0.7s ease 0.6s forwards;
+  stroke-width: 2.5;
+  stroke-dasharray: 300;
+  stroke-dashoffset: 300;
+  animation: draw-line 0.8s ease 0.6s forwards;
 }
 
 @keyframes draw-line {
@@ -98,106 +107,120 @@ main {
   .hero-dots circle, .hero-fit { animation: none; opacity: 1; stroke-dashoffset: 0; }
 }
 
-/* --- Card grid --- */
+/* --- Bento grid --- */
 
-.card-grid {
+.grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  gap: 16px;
 }
 
-.card {
-  display: block;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-top: 3px solid var(--accent);
-  border-radius: 8px;
-  padding: 22px 24px 24px;
+.tile-wide {
+  grid-column: 1 / -1;
+}
+
+.tile {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: var(--tile);
+  color: var(--ink);
+  border-radius: 14px;
+  padding: 26px 30px;
   text-decoration: none;
-  color: var(--text);
+  border: 2px solid transparent;
   transition: border-color 0.15s ease;
 }
 
-.card:hover {
-  border-color: var(--accent);
+.tile:hover, .tile:focus-visible {
+  border-color: var(--ink);
+  outline: none;
 }
 
-.card h2 {
-  font-family: "Fraunces", serif;
-  font-size: 1.15rem;
-  font-weight: 600;
-  margin: 14px 0 6px;
+.tile-wide {
+  align-items: center;
 }
 
-.card p {
-  color: var(--text-muted);
-  font-size: 0.92rem;
-  line-height: 1.5;
-  margin: 0;
+.tile-sketch {
+  width: 160px;
+  flex-shrink: 0;
+  opacity: 0.95;
 }
 
-.card-sketch {
-  width: 100%;
-  height: 70px;
-  display: block;
+.tile-wide .tile-sketch {
+  width: 220px;
 }
 
-.card-sketch circle {
-  fill: var(--text-muted);
+.tile-sketch circle {
+  fill: var(--ink);
 }
-.card-sketch line, .card-sketch rect, .card-sketch path {
+.tile-sketch line, .tile-sketch rect, .tile-sketch path {
   fill: none;
-  stroke: var(--accent);
-  stroke-width: 1.5;
-}
-.card-sketch rect {
-  fill: var(--surface);
-}
-.card-sketch .axis {
-  stroke: var(--border);
-}
-.card-sketch .diag {
-  stroke: var(--border);
-  stroke-dasharray: 3,3;
-}
-.card-sketch .c0 { fill: #3B6FD6; }
-.card-sketch .c1 { fill: #E0575B; }
-.card-sketch .query {
-  fill: var(--surface);
-  stroke: var(--accent);
+  stroke: var(--ink);
   stroke-width: 2;
 }
-.card-sketch .knn-link {
-  stroke: var(--text-muted);
-  stroke-dasharray: 2,2;
+.tile-sketch rect {
+  fill: var(--tile);
+}
+.tile-sketch .axis {
+  stroke: var(--ink);
+  opacity: 0.4;
+}
+.tile-sketch .diag {
+  stroke: var(--ink);
+  opacity: 0.35;
+  stroke-dasharray: 3,3;
+}
+.tile-sketch .a { fill: var(--ink); opacity: 0.55; }
+.tile-sketch .b { fill: var(--ink); }
+.tile-sketch .q {
+  fill: var(--tile);
+  stroke: var(--ink);
+  stroke-width: 2.5;
+}
+.tile-sketch .link {
+  stroke: var(--ink);
+  opacity: 0.5;
+  stroke-dasharray: 2,3;
+}
+
+.tile-text h2 {
+  font-size: 1.35rem;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+.tile-wide .tile-text h2 {
+  font-size: 1.7rem;
+}
+
+.tile-text p {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0;
+  opacity: 0.85;
 }
 
 /* --- Footer --- */
 
 footer {
-  max-width: 920px;
-  margin: 64px auto 0;
+  margin-top: 56px;
   padding-top: 20px;
   border-top: 1px solid var(--border);
 }
 
 footer p {
-  color: var(--text-muted);
+  color: var(--muted);
   font-size: 0.85rem;
   margin: 0;
 }
 
 /* --- Responsive --- */
 
-@media (max-width: 640px) {
-  .card-grid {
-    grid-template-columns: 1fr;
-  }
-  .hero {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .hero-sketch {
-    width: 180px;
-  }
+@media (max-width: 720px) {
+  .hero h1 { font-size: 2.4rem; }
+  .hero-sketch { width: 200px; }
+  .grid { grid-template-columns: 1fr; }
+  .tile, .tile-wide { grid-column: 1 / -1; flex-direction: column; align-items: flex-start; }
+  .tile-sketch, .tile-wide .tile-sketch { width: 100%; height: auto; }
 }

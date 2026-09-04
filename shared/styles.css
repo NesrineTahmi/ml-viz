@@ -1,34 +1,56 @@
-/* Base layout */
+:root {
+  --bg: #121317;
+  --surface: #1A1C22;
+  --ink: #F5F6F4;
+  --muted: #8A8F98;
+  --border: #2A2C33;
+
+  --color-point: #3B6FD6;
+  --color-point-hover: #6B93E8;
+  --color-line: #E0575B;
+  --color-grid: #24262D;
+  --color-boundary: #F5A623;
+  --color-correct: #12B886;
+  --color-wrong: #E0575B;
+}
+
+* { box-sizing: border-box; }
+
 body {
-  font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: "Space Grotesk", sans-serif;
   margin: 0;
-  padding: 24px;
-  background: #fafafa;
-  color: #222;
+  padding: 32px 28px 56px;
+  background: var(--bg);
+  color: var(--ink);
+  max-width: 1040px;
 }
 
 h1 {
-  font-size: 1.4rem;
-  margin-bottom: 4px;
+  font-size: 1.7rem;
+  font-weight: 600;
+  margin: 0 0 4px;
 }
 
 .subtitle {
-  color: #666;
-  font-size: 0.95rem;
-  margin-bottom: 20px;
+  color: var(--muted);
+  font-size: 0.98rem;
+  margin: 0 0 22px;
+  max-width: 560px;
+  line-height: 1.5;
 }
 
-/* Controls (sliders, buttons) */
+/* Controls */
 #controls {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 16px;
+  gap: 20px;
+  margin-bottom: 18px;
   flex-wrap: wrap;
 }
 
 #controls label {
   font-size: 0.9rem;
+  color: var(--muted);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -36,49 +58,68 @@ h1 {
 
 input[type="range"] {
   width: 160px;
+  accent-color: var(--color-boundary);
 }
 
 button {
-  padding: 6px 14px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background: white;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
   cursor: pointer;
+  font-family: inherit;
   font-size: 0.9rem;
+  transition: border-color 0.15s ease;
 }
 
 button:hover {
-  background: #f0f0f0;
+  border-color: var(--color-boundary);
 }
 
 /* Visualization canvas */
-svg#viz {
+svg#viz, svg#roc-viz, svg#scores-viz, svg#tree-viz {
   width: 100%;
   max-width: 700px;
-  height: 450px;
-  background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
 }
 
-/* Colors used across all demos — keep consistent */
-:root {
-  --color-point: #3b6fd6;
-  --color-point-hover: #274b96;
-  --color-line: #e0575b;
-  --color-grid: #eee;
-  --color-boundary: #f5a623;
-  --color-correct: #4caf50;
-  --color-wrong: #e0575b;
+svg#viz { height: 450px; }
+
+/* Axis text */
+.tick text {
+  fill: var(--muted);
+  font-size: 11px;
+}
+.domain {
+  stroke: var(--border);
 }
 
 /* Live stats readout */
 #stats {
-  margin-top: 14px;
-  font-family: "SF Mono", Consolas, monospace;
-  font-size: 0.9rem;
-  background: #f0f0f0;
-  padding: 10px 14px;
-  border-radius: 6px;
+  margin-top: 16px;
+  font-size: 0.92rem;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 12px 16px;
+  border-radius: 8px;
   display: inline-block;
+}
+
+#stats strong {
+  color: var(--color-boundary);
+}
+
+a.back-link {
+  display: inline-block;
+  margin-bottom: 20px;
+  color: var(--muted);
+  font-size: 0.88rem;
+  text-decoration: none;
+}
+a.back-link:hover {
+  color: var(--ink);
 }
